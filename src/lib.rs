@@ -11,4 +11,4 @@ pub mod response;
 pub mod stream_helper;
 pub mod util;
 
-type Result<T> = std::result::Result<T, TcpIpError>;
+pub type Result<T> = std::result::Result<T, TcpIpError>;
