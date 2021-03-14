@@ -53,9 +53,10 @@ impl ResponseBuilder {
         self
     }
 
-    pub fn body(mut self, body: Vec<u8>) -> Self {
-        self.body = Some(body);
-        self
+    pub fn body(self, body: Vec<u8>) -> Self {
+        let mut new = self.header("Content-Length", &body.len().to_string());
+        new.body = Some(body);
+        new
     }
 
     pub fn build(self) -> Option<Response> {
