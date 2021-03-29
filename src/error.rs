@@ -41,6 +41,7 @@ impl From<std::io::Error> for TcpIpError {
         if e.kind() == std::io::ErrorKind::WouldBlock
             || e.kind() == std::io::ErrorKind::TimedOut
             || e_string.contains("(os error 10053)")
+            || e_string.contains("(os error 10054)")
         {
             TcpIpError::TcpTimeout
         } else {
