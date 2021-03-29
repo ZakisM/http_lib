@@ -36,10 +36,15 @@ impl TcpIpError {
 
 impl From<std::io::Error> for TcpIpError {
     fn from(e: Error) -> Self {
-        if e.kind() == std::io::ErrorKind::WouldBlock || e.kind() == std::io::ErrorKind::TimedOut {
+        let e_string = e.to_string();
+
+        if e.kind() == std::io::ErrorKind::WouldBlock
+            || e.kind() == std::io::ErrorKind::TimedOut
+            || e_string.contains("(os error 10053)")
+        {
             TcpIpError::TcpTimeout
         } else {
-            TcpIpError::new(e.to_string())
+            TcpIpError::new(e_string)
         }
     }
 }
