@@ -10,6 +10,16 @@ pub enum TcpIpError {
     Other(String),
 }
 
+pub trait ErrorExt<T> {
+    fn context(self, msg: &str) -> Result<T, TcpIpError>;
+}
+
+impl<T> ErrorExt<T> for Option<T> {
+    fn context(self, msg: &str) -> Result<T, TcpIpError> {
+        self.ok_or_else(|| TcpIpError::Other(msg.to_owned()))
+    }
+}
+
 impl std::error::Error for TcpIpError {}
 
 impl std::fmt::Display for TcpIpError {

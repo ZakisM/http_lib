@@ -6,7 +6,7 @@ use crate::header_map::HeaderMap;
 use crate::request::request_method::RequestMethod;
 use crate::Result;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct RequestHeader {
     pub method: RequestMethod,
     pub uri: String,

@@ -1,9 +1,11 @@
 use std::fmt::Formatter;
 
+use crate::error::ErrorExt;
 use crate::header_map::HeaderMap;
 use crate::http_item::HttpItem;
 use crate::request::request_header::RequestHeader;
 use crate::request::request_method::RequestMethod;
+use crate::Result;
 
 pub mod request_header;
 pub mod request_method;
@@ -57,20 +59,20 @@ impl RequestBuilder {
         self
     }
 
-    pub fn build(self) -> Option<Request> {
-        let method = self.method?;
-        let uri = self.uri?;
+    pub fn build(self) -> Result<Request> {
+        let method = self.method.context("Missing request_method")?;
+        let uri = self.uri.context("Missing URI")?;
         let version = self.version;
         let headers = self.headers;
         let body = self.body;
 
         let header = RequestHeader::new(method, uri, version, headers);
 
-        Some(Request { header, body })
+        Ok(Request { header, body })
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Request {
     pub header: RequestHeader,
     pub body: Option<Vec<u8>>,

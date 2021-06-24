@@ -2,7 +2,9 @@ use std::fmt::{Display, Formatter};
 use std::io::BufReader;
 use std::net::TcpStream;
 
+use crate::error::ErrorExt;
 use crate::header_item::HeaderItem;
+use crate::util::slice_find_to_end;
 use crate::Result;
 
 pub trait HttpItem {
@@ -32,6 +34,24 @@ pub trait HttpItem {
         let bytes = self.to_bytes()?;
 
         Ok(String::from_utf8(bytes)?)
+    }
+
+    fn from_bytes(bytes: &[u8]) -> Result<Self>
+    where
+        Self: Sized,
+    {
+        let header_end =
+            slice_find_to_end(bytes, &[13, 10, 13, 10]).context("Failed to read header_end")?;
+
+        let header = Self::HeaderType::from_bytes(&bytes[..header_end])?;
+
+        let body = if let Some(b) = header.body_type() {
+            Some(b.read_body(&mut BufReader::new(&bytes[header_end + 4..]))?)
+        } else {
+            None
+        };
+
+        Ok(Self::new(header, body))
     }
 
     fn from_reader(reader: &mut BufReader<&TcpStream>) -> Result<Self>

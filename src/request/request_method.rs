@@ -4,7 +4,7 @@ use std::str::FromStr;
 use crate::error::TcpIpError;
 use crate::Result;
 
-#[derive(Debug, Eq, PartialEq)]
+#[derive(Debug, Eq, PartialEq, Clone)]
 pub enum RequestMethod {
     Get,
     Head,

@@ -1,10 +1,12 @@
 use std::convert::TryFrom;
 use std::fmt::Formatter;
 
+use crate::error::ErrorExt;
 use crate::header_map::HeaderMap;
 use crate::http_item::HttpItem;
 use crate::response::response_header::ResponseHeader;
 use crate::response::response_status::ResponseStatus;
+use crate::Result;
 
 pub mod response_header;
 pub mod response_status;
@@ -59,14 +61,14 @@ impl ResponseBuilder {
         new
     }
 
-    pub fn build(self) -> Option<Response> {
+    pub fn build(self) -> Result<Response> {
         let version = self.version;
-        let status_code = self.status_code?;
+        let status_code = self.status_code.context("Missing status_code")?;
 
         let reason_phrase = if let Some(reason_phrase) = self.reason_phrase {
             reason_phrase
         } else {
-            ResponseStatus::try_from(status_code).ok()?.to_string()
+            ResponseStatus::try_from(status_code)?.to_string()
         };
 
         let headers = self.headers;
@@ -74,11 +76,11 @@ impl ResponseBuilder {
 
         let header = ResponseHeader::new(version, status_code, reason_phrase, headers);
 
-        Some(Response { header, body })
+        Ok(Response { header, body })
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Response {
     pub header: ResponseHeader,
     pub body: Option<Vec<u8>>,

@@ -5,7 +5,7 @@ use crate::header_item::HeaderItem;
 use crate::header_map::HeaderMap;
 use crate::Result;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct ResponseHeader {
     pub version: f32,
     pub status_code: u16,

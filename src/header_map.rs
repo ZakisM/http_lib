@@ -1,6 +1,6 @@
 use std::ops::Deref;
 
-#[derive(Debug, Default)]
+#[derive(Debug, Default, Clone)]
 pub struct HeaderMap {
     pub headers: Vec<(String, String)>,
 }
