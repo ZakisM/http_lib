@@ -60,6 +60,7 @@ impl BodyType {
                         }
                     }
 
+                    // Read 1 byte at a time to get the next chunk
                     if let Err(e) = reader.take(1).read_to_end(&mut chunk_data) {
                         return Err(TcpIpError::from(e));
                     }
